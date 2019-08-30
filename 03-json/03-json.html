@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Visalle</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .dyr {
+            border: 1px solid silver;
+            padding: 20px;
+        }
+
+        section {
+            width: 80vw;
+            margin: 1vw auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-gap: 1rem;
+            /*  */
+        }
+    </style>
+</head>
+
+<body>
+    <section id="person-liste"></section>
+
+    <template>
+        <article class="personer">
+            <h2 class="navn">Navn</h2>
+            <p class="github"> </p>
+            <img class="billede" src="" alt="">
+            <p class="alder"> </p>
+            <p class="køn"> </p>
+            <p class="email"> </p>
+            <p class="hold"> </p>
+
+
+
+        </article>
+    </template>
+
+    <script>
+        let elever = [];
+
+        document.addEventListener("DOMContentLoaded", start);
+
+        function start() {
+            console.log(start);
+            hentJson();
+        }
+
+        //const id = "1Xge7slZ9dEOTCn1Yxl3OE4xgvrXOL8Y_iu3WN1yGB1U";
+
+        const url = "https://spreadsheets.google.com/feeds/list/1Xge7slZ9dEOTCn1Yxl3OE4xgvrXOL8Y_iu3WN1yGB1U/od6/public/values?alt=json";
+
+        async function hentJson() {
+            const response = await fetch(url);
+            console.log(response);
+            elever = await response.json();
+
+
+            visJson();
+        }
+
+
+        function visJson() {
+            const skabelon = document.querySelector("template").content;
+            const dest = document.querySelector("#person-liste");
+            console.log(elever);
+            elever.feed.entry.forEach(personer => {
+                const klon = skabelon.cloneNode(true);
+                console.log(personer);
+
+                const h2 = klon.querySelector("h2");
+                h2.textContent = personer.gsx$navn.$t;
+
+                const p = klon.querySelector(".github");
+                p.textContent = "Github: " + personer.gsx$github.$t;
+
+                const img = klon.querySelector("img");
+                img.src = personer.billede;
+                img.alt = "Billede af " + personer.gsx$billede.$t;
+
+                const alder = klon.querySelector(".alder");
+                alder.textContent = "Alder: " + personer.gsx$alder.$t;
+
+                const køn = klon.querySelector(".køn");
+                køn.textContent = "Køn: " + personer.gsx$køn.$t;
+
+                const email = klon.querySelector(".email");
+                email.textContent = "E-mail: " + personer.gsx$email.$t;
+
+                const hold = klon.querySelector(".hold");
+                hold.textContent = "Hold: " + personer.gsx$hold.$t;
+
+                dest.appendChild(klon);
+
+            });
+
+        }
+    </script>
+</body></html>
