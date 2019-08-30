@@ -6,9 +6,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        .dyr {
+        img {
+            width: 100%;
+        }
+
+        .personer {
             border: 1px solid silver;
-            padding: 20px;
+            padding: 10px;
         }
 
         section {
@@ -79,8 +83,8 @@
                 p.textContent = "Github: " + personer.gsx$github.$t;
 
                 const img = klon.querySelector("img");
-                img.src = personer.billede;
-                img.alt = "Billede af " + personer.gsx$billede.$t;
+                img.src = personer.gsx$billede.$t;
+                img.alt = "Billede af " + personer.navn;
 
                 const alder = klon.querySelector(".alder");
                 alder.textContent = "Alder: " + personer.gsx$alder.$t;
