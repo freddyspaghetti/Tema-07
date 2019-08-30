@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+
+</head>
+
+<body>
+    <template>
+        <article>
+            <h1>Person</h1>
+            <h2>Navn Hold</h2>
+            <img class="profil-billede">
+        </article>
+    </template>
+
+    <section id="person-liste"></section>
+
+    <script>
+        const skabelon = document.querySelector("template").content;
+        const listeElm = document.querySelector("#person-liste");
+
+        console.log(skabelon);
+
+        const array = [{
+                navn: "Martin",
+                hold: "a",
+                højde: 180,
+                hårfarve: "blå",
+                billede: "https://media1.popsugar-assets.com/files/thumbor/PqBqxo_cWMRP99nvp73HN0lSqr0/fit-in/1024x1024/filters:format_auto-!!-:strip_icc-!!-/2016/01/11/797/n/1922153/940d7f6ffea5ccb7_grid-cell-30798-1452255774-1/i/Photos-People-Freckles.jpg",
+                thumb: "martin-1.jpg"
+            },
+            {
+                navn: "Kamilla",
+                hold: "b",
+                højde: 170,
+                hårfarve: "sølv",
+                billede: "https://kvikea.dk/pix2.jpg",
+                thumb: "kamilla-1.jpg"
+            },
+            {
+                navn: "Birger",
+                hold: "a",
+                højde: 160,
+                hårfarve: "grøn",
+                billede: "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
+                thumb: "kamilla-1.jpg"
+            },
+            {
+                navn: "Romeo",
+                hold: "b",
+                højde: 190,
+                hårfarve: "rød",
+                billede: "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
+                thumb: "kamilla-1.jpg"
+            }
+        ]
+
+        array.forEach(person => {
+            const klon = skabelon.cloneNode(true);
+            console.log(klon);
+            const h2 = klon.querySelector("h2");
+            h2.textContent = person.navn;
+            h2.textContent += " - Hold " + person.navn;
+            const img = klon.querySelector("img");
+            img.src = person.billede;
+            img.alt = "Billede af" + person.navn;
+            listeElm.appendChild(klon);
+        })
+    </script>
+</body></html>

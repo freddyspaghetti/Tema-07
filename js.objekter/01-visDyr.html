@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <script>
+        img {
+            width: 200 px;
+        }
+    </script>
+</head>
+
+<body>
+    <h1>Kend dine dyr!</h1>
+    <h2>Navn på dyr</h2>
+    <h3>Type</h3>
+    <h4>Levested</h4>
+    <img class="profil-billede">
+
+    <script>
+        const dyr = {
+            navn: "Dyr: Egern",
+            type: "Type: Gnaver",
+            billede: "https://bt.bmcdn.dk/media/cache/resolve/image_1240/image/16/167027/194498-egern.jpg",
+            levested: "Levested: Skoven"
+
+
+        }
+
+        const h2 = document.querySelector("h2");
+        h2.textContent = dyr.navn;
+
+        const h3 = document.querySelector("h3");
+        h3.textContent = dyr.type;
+
+        const h4 = document.querySelector("h4");
+        h4.textContent = dyr.levested;
+
+        const img = document.querySelector("img");
+        img.src = dyr.billede;
+        img.alt = "Billede af et egern";
+
+
+        console.log(dyr.navn, dyr.type, dyr.levested);
+    </script>
+</body></html>

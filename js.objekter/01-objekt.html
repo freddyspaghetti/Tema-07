@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+
+</head>
+
+<body>
+    <h1>Dyr</h1>
+    <h2>Navn Hold</h2>
+    <img class="profil-billede">
+
+    <script>
+        const dyr = {
+            navn: "Dyr: Egern - ",
+            type: "Type: Gnaver - ",
+            billede: "https://bt.bmcdn.dk/media/cache/resolve/image_1240/image/16/167027/194498-egern.jpg",
+            levested: "Levested: Skoven"
+
+
+        }
+
+        const h2 = document.querySelector("h2");
+        h2.textContent = dyr.navn;
+        const img = document.querySelector("img");
+        img.src = dyr.billede;
+        img.alt = "Billede af Kamilla";
+
+        console.log(dyr.navn, dyr.type, dyr.levested);
+    </script>
+</body></html>
