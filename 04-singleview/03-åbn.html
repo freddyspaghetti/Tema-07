@@ -229,6 +229,7 @@
             console.log(personer);
             document.querySelector("#detalje").style.display = "block";
 
+            // Gør at "X" lukker pop-up boksen
             document.querySelector("#detalje .luk").addEventListener("click", hideDetalje);
 
             document.querySelector("#detalje h2").textContent = personer.gsx$navn.$t;
