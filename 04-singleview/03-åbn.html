@@ -69,6 +69,7 @@
         .hidden {
             display: none;
         }
+
     </style>
 </head>
 
@@ -116,7 +117,7 @@
         document.addEventListener("DOMContentLoaded", start);
         let filter = "alle";
         let elever = [];
-        const filterKnapper = document.querySelectorAll("button");
+        const filterKnapper = document.querySelectorAll("nav button");
 
 
         //første funktion der kaldes efter DOM er loaded
@@ -242,5 +243,8 @@
         function hideDetalje() {
             document.querySelector("#detalje").style.display = "none";
         }
+
     </script>
-</body></html>
+</body>
+
+</html>
