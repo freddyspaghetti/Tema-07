@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Visalle</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        img {
+            width: 100%;
+        }
+
+        p {
+            font-family: arial;
+        }
+
+        h2 {
+            font-family: arial;
+        }
+
+        nav {
+            text-align: center;
+        }
+
+        .valgt {
+            background-color: red;
+        }
+
+        .personer {
+            border: 1px solid black;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        section {
+            width: 80vw;
+            margin: 1vw auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-gap: 1rem;
+            /*  */
+        }
+
+        #detalje {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: hsla(282, 22%, 31%, 0.53);
+            overflow: scroll;
+        }
+
+        #detalje .luk {
+            position: fixed;
+            top: 0;
+            right: 0;
+            font-size: 4rem;
+        }
+
+        #detalje .personer {
+            width: 60vw;
+            min-height: 50vh;
+            margin: 4rem auto;
+            padding: 4rem;
+            background: white;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <button class="filter valgt" data-køn="alle">Alle</button>
+        <button class="filter" data-køn="m">Mænd</button>
+        <button class="filter" data-køn="k">Kvinder</button>
+        <button class="filter" data-køn="andet">Andet</button>
+
+
+    </nav>
+
+
+    <section id="person-liste"></section>
+
+    <section id="detalje">
+        <article class="personer">
+            <button class="luk">X</button>
+            <h2></h2>
+            <img src"" alt="">
+            <p>Github:
+                <a class="githubLink" href""></a></p>
+        </article>
+    </section>
+
+    <template>
+        <article class="personer">
+            <h2 class="navn">Navn</h2>
+            <p class="github"> </p>
+            <img class="billede" src="" alt="">
+            <p class="alder"> </p>
+            <p class="køn"> </p>
+            <p class="email"> </p>
+            <p class="hold"> </p>
+
+
+
+        </article>
+    </template>
+
+    <script>
+        //Glodbale variabler:
+        document.addEventListener("DOMContentLoaded", start);
+        let filter = "alle";
+        let elever = [];
+        const filterKnapper = document.querySelectorAll("button");
+
+
+        //første funktion der kaldes efter DOM er loaded
+        function start() {
+            const filterKnapper = document.querySelectorAll("nav button");
+            filterKnapper.forEach(knap => knap.addEventListener("click", filtrer))
+            hideDetalje();
+            hentJson();
+        }
+
+        function hideDetalje() {
+            document.querySelector("#detalje").classList.add("hidden");
+        }
+
+        //const id = "1Xge7slZ9dEOTCn1Yxl3OE4xgvrXOL8Y_iu3WN1yGB1U";
+
+        const url = "https://spreadsheets.google.com/feeds/list/1Xge7slZ9dEOTCn1Yxl3OE4xgvrXOL8Y_iu3WN1yGB1U/od6/public/values?alt=json";
+
+
+        // funktion der henter data fra URL (Google Sheet)
+        async function hentJson() {
+            const response = await fetch(url);
+            console.log(response);
+            elever = await response.json();
+
+
+            visJson();
+        }
+
+        //
+        filterKnapper.forEach(knap => knap.addEventListener("click", filtrer));
+
+        // funktion der filtrerer personer
+        function filtrer() {
+            console.log(this);
+
+            document.querySelector(".valgt").classList.remove("valgt");
+            this.classList.add("valgt");
+            filter = this.dataset.køn;
+            visJson();
+
+
+
+        }
+
+
+        // funktion der viser personer i liste view
+        function visJson() {
+            const skabelon = document.querySelector("template").content; // select indhold af HTML skabelon (article)
+            const dest = document.querySelector("#person-liste"); //container til articles med en person
+            dest.textContent = "";
+            console.log(elever);
+            elever.feed.entry.forEach(personer => { // Loop igennem JSON (personer)
+
+                if (personer.gsx$køn.$t == filter || filter == "alle") { // Tjek hvilket køn personen har og sammenlign med filter
+                    const klon = skabelon.cloneNode(true);
+
+
+                    console.log(personer);
+
+                    // Hent og vis navn
+                    const h2 = klon.querySelector("h2");
+                    h2.textContent = personer.gsx$navn.$t;
+
+                    // Hent og vis GitHub
+                    const p = klon.querySelector(".github");
+                    p.textContent = "Github: " + personer.gsx$github.$t;
+
+                    // Hent og vis img
+                    const img = klon.querySelector("img");
+                    img.src = personer.gsx$billede.$t;
+                    img.alt = "Billede af " + personer.navn;
+
+                    // Hent og vis alder
+                    const alder = klon.querySelector(".alder");
+                    alder.textContent = "Alder: " + personer.gsx$alder.$t;
+
+                    // Hent og vis køn
+                    const køn = klon.querySelector(".køn");
+                    køn.textContent = "Køn: " + personer.gsx$køn.$t;
+
+                    // Hent og vis email
+                    const email = klon.querySelector(".email");
+                    email.textContent = "E-mail: " + personer.gsx$email.$t;
+
+                    // Hent og vis hold
+                    const hold = klon.querySelector(".hold");
+                    hold.textContent = "Hold: " + personer.gsx$hold.$t;
+
+
+                    /*klon.querySelector(".personer").addEventListener("click", () => {
+                        visDetalje(personer);
+                    });*/
+
+                    dest.appendChild(klon);
+
+                    dest.lastElementChild.addEventListener("click", () => {
+                        visDetalje(personer);
+                    });
+
+
+                }
+            });
+
+        }
+
+        // funktion der viser personer i detalje view (medsend person!)
+        function visDetalje(personer) {
+            console.log(personer);
+            document.querySelector("#detalje").style.display = "block";
+
+            document.querySelector("#detalje .luk").addEventListener("click", hideDetalje);
+
+            document.querySelector("#detalje h2").textContent = personer.gsx$navn.$t;
+            document.querySelector("#detalje img").src = personer.gsx$billede.$t;
+            document.querySelector("#detalje img").alt = `Portræt af ${personer.gsx$billede.$t}`;
+            document.querySelector("#detalje .githubLink").href = `https://github.com/${personer.gsx$github.$t}`;
+            document.querySelector("#detalje .githubLink").textContent = `github.com/${personer.gsx$github.$t}`;
+
+        }
+
+        // funktionen der skjuler detaljerne om en person
+        function hideDetalje() {
+            document.querySelector("#detalje").style.display = "none";
+        }
+    </script>
+</body></html>

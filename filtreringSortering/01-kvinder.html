@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Visalle</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        img {
+            width: 100%;
+        }
+
+        p {
+            font-family: arial;
+        }
+
+        h2 {
+            font-family: arial;
+        }
+
+        nav {
+            text-align: center;
+        }
+
+        .valgt {
+            background-color: red;
+        }
+
+        .personer {
+            border: 1px solid black;
+            padding: 10px;
+        }
+
+        section {
+            width: 80vw;
+            margin: 1vw auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-gap: 1rem;
+            /*  */
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav>
+            <button class="filter valgt" data-køn="alle">Alle</button>
+            <button class="filter" data-køn="m">Mænd</button>
+            <button class="filter" data-køn="k">Kvinder</button>
+            <button class="filter" data-køn="andet">Andet</button>
+
+
+        </nav>
+    </header>
+
+    <section id="person-liste"></section>
+
+    <template>
+        <article class="personer">
+            <h2 class="navn">Navn</h2>
+            <p class="github"> </p>
+            <img class="billede" src="" alt="">
+            <p class="alder"> </p>
+            <p class="køn"> </p>
+            <p class="email"> </p>
+            <p class="hold"> </p>
+
+
+
+        </article>
+    </template>
+
+    <script>
+        //Glodbale variabler:
+        document.addEventListener("DOMContentLoaded", start);
+        let filter = "alle";
+        let elever = [];
+        const filterKnapper = document.querySelectorAll("button");
+
+
+        //første funktion der kaldes efter DOM er loaded
+        function start() {
+            const filterKnapper = document.querySelectorAll("button");
+            filterKnapper.forEach(knap => knap.addEventListener("click", filtrer))
+            console.log(start);
+            hentJson();
+        }
+
+        //const id = "1Xge7slZ9dEOTCn1Yxl3OE4xgvrXOL8Y_iu3WN1yGB1U";
+
+        const url = "https://spreadsheets.google.com/feeds/list/1Xge7slZ9dEOTCn1Yxl3OE4xgvrXOL8Y_iu3WN1yGB1U/od6/public/values?alt=json";
+
+
+        // funktion der henter data fra URL (Google Sheet)
+        async function hentJson() {
+            const response = await fetch(url);
+            console.log(response);
+            elever = await response.json();
+
+
+            visJson();
+        }
+
+        filterKnapper.forEach(knap => knap.addEventListener("click", filtrer));
+
+        // funktion der filtrerer personer
+        function filtrer() {
+            console.log(this);
+
+            document.querySelector(".valgt").classList.remove("valgt");
+            this.classList.add("valgt");
+            filter = this.dataset.køn;
+            visJson();
+
+
+
+        }
+
+
+        // funktion der viser personer i liste view
+        function visJson() {
+            const skabelon = document.querySelector("template").content; // select indhold af HTML skabelon (article)
+            const dest = document.querySelector("#person-liste"); //container til articles med en person
+            dest.textContent = "";
+            console.log(elever);
+            elever.feed.entry.forEach(personer => { // Loop igennem JSON (personer)
+
+                if (personer.gsx$køn.$t == filter || filter == "alle") { // Tjek hvilket køn personen har og sammenlign med filter
+                    const klon = skabelon.cloneNode(true);
+                    console.log(personer);
+
+                    // Hent og vis navn
+                    const h2 = klon.querySelector("h2");
+                    h2.textContent = personer.gsx$navn.$t;
+
+                    // Hent og vis GitHub
+                    const p = klon.querySelector(".github");
+                    p.textContent = "Github: " + personer.gsx$github.$t;
+
+                    // Hent og vis img
+                    const img = klon.querySelector("img");
+                    img.src = personer.gsx$billede.$t;
+                    img.alt = "Billede af " + personer.navn;
+
+                    // Hent og vis alder
+                    const alder = klon.querySelector(".alder");
+                    alder.textContent = "Alder: " + personer.gsx$alder.$t;
+
+                    // Hent og vis køn
+                    const køn = klon.querySelector(".køn");
+                    køn.textContent = "Køn: " + personer.gsx$køn.$t;
+
+                    // Hent og vis email
+                    const email = klon.querySelector(".email");
+                    email.textContent = "E-mail: " + personer.gsx$email.$t;
+
+                    // Hent og vis hold
+                    const hold = klon.querySelector(".hold");
+                    hold.textContent = "Hold: " + personer.gsx$hold.$t;
+
+                    dest.appendChild(klon);
+                }
+            });
+
+        }
+    </script>
+</body></html>
