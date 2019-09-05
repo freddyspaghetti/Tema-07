@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Visalle</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        h1 {
+            text-align: center;
+            font-size: 4rem;
+            font-family: arial;
+        }
+
+        img {
+            width: 100%;
+        }
+
+        p {
+            font-family: arial;
+        }
+
+        h2 {
+            font-family: arial;
+        }
+
+        nav {
+            text-align: center;
+        }
+
+        .valgt {
+            background-color: red;
+        }
+
+        .items {
+            border: 1px solid black;
+            padding: 10px;
+            cursor: pointer;
+            background-color: aliceblue;
+        }
+
+        section {
+            width: 80vw;
+            margin: 1vw auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-gap: 1rem;
+            /*  */
+        }
+
+        #detalje {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: hsla(282, 22%, 31%, 0.53);
+            overflow: scroll;
+        }
+
+        #detalje .luk {
+            position: fixed;
+            top: 0;
+            right: 0;
+            font-size: 4rem;
+        }
+
+        #detalje .items {
+            width: 60vw;
+            min-height: 50vh;
+            margin: 4rem auto;
+            padding: 4rem;
+            background: white;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Babushka</h1>
+    <nav>
+        <button data-kategori="alle" class="valgt">Alle</button>
+        <button data-kategori="forretter">Forrretter</button>
+        <button data-kategori="hovedretter">Hovedretter</button>
+        <button data-kategori="desserter">Desserter</button>
+        <button data-kategori="sideorders">Sides</button>
+        <button data-kategori="drikkevarer">Drikkevarer</button>
+    </nav>
+
+
+    <section id="item-liste"></section>
+
+    <section id="detalje">
+        <article class="items">
+            <button class="luk">X</button>
+            <h2></h2>
+            <img src"" alt="">
+            <p class=lang></p>
+            <p class="oprindelse">Oprindelse:</p>
+        </article>
+    </section>
+
+    <template>
+        <article class="items">
+            <h2 class="navn">Navn</h2>
+            <p class="lang"> </p>
+            <p class="oprindelse"> </p>
+            <p class="kort"> </p>
+            <img class="billede" src="" alt="">
+            <p class="pris"> </p>
+
+
+
+        </article>
+    </template>
+
+    <script>
+        //Glodbale variabler:
+        document.addEventListener("DOMContentLoaded", start);
+        let filter = "alle";
+        let menu = [];
+        const filterKnapper = document.querySelectorAll("nav button");
+
+
+        //første funktion der kaldes efter DOM er loaded
+        function start() {
+            const filterKnapper = document.querySelectorAll("nav button");
+            filterKnapper.forEach(knap => knap.addEventListener("click", filtrer))
+            hideDetalje();
+            hentJson();
+        }
+
+        function hideDetalje() {
+            document.querySelector("#detalje").classList.add("hidden");
+        }
+
+        //const id = "1Xge7slZ9dEOTCn1Yxl3OE4xgvrXOL8Y_iu3WN1yGB1U";
+
+        const url = "https://spreadsheets.google.com/feeds/list/17Dd7DvkPaFamNUdUKlrFgnH6POvBJXac7qyiS6zNRw0/od6/public/values?alt=json";
+
+
+        // funktion der henter data fra URL (Google Sheet)
+        async function hentJson() {
+            const response = await fetch(url);
+            console.log(response);
+            menu = await response.json();
+
+
+            visJson();
+        }
+
+        //
+        filterKnapper.forEach(knap => knap.addEventListener("click", filtrer));
+
+        // funktion der filtrerer items
+        function filtrer() {
+            console.log(filter);
+            document.querySelector(".valgt").classList.remove("valgt");
+            this.classList.add("valgt");
+            filter = this.dataset.kategori;
+            visJson();
+
+        }
+
+
+        // funktion der viser items i liste view
+        function visJson() {
+            const skabelon = document.querySelector("template").content; // select indhold af HTML skabelon (article)
+            const dest = document.querySelector("#item-liste"); //container til articles med en person
+            dest.textContent = "";
+            console.log(menu);
+            menu.feed.entry.forEach(items => { // Loop igennem JSON (items)
+
+                if (items.gsx$kategori.$t == filter || filter == "alle") { // Tjek hvilket oprindelse personen har og sammenlign med filter
+                    const klon = skabelon.cloneNode(true);
+
+
+                    console.log(items);
+
+                    // Hent og vis navn
+                    const h2 = klon.querySelector("h2");
+                    h2.textContent = items.gsx$navn.$t;
+
+                    // Hent og vis pris
+                    const p = klon.querySelector(".pris");
+                    p.textContent = "Pris: " + items.gsx$pris.$t + " kr.";
+
+
+                    // Hent og vis img
+                    const img = klon.querySelector("img");
+                    klon.querySelector(".billede").src = "imgs/small/" + items.gsx$billede.$t + "-sm.jpg";
+                    img.alt = "Billede af " + items.navn;
+
+
+                    // Hent og vis kort
+                    const kort = klon.querySelector(".kort");
+                    kort.textContent = "" + items.gsx$kort.$t;
+
+
+
+
+                    /*klon.querySelector(".items").addEventListener("click", () => {
+                        visDetalje(items);
+                    });*/
+
+                    dest.appendChild(klon);
+
+                    dest.lastElementChild.addEventListener("click", () => {
+                        visDetalje(items);
+                    });
+
+
+                }
+            });
+
+        }
+
+        // funktion der viser items i detalje view (medsend person!)
+        function visDetalje(items) {
+            console.log(items);
+            document.querySelector("#detalje").style.display = "block";
+
+            // Gør at "X" lukker pop-up boksen
+            document.querySelector("#detalje .luk").addEventListener("click", hideDetalje);
+
+            document.querySelector("#detalje h2").textContent = items.gsx$navn.$t;
+            document.querySelector("#detalje img").src = "imgs/large/" + items.gsx$billede.$t + ".jpg";
+            document.querySelector("#detalje img").alt = `Portræt af ${items.gsx$billede.$t}`;
+            document.querySelector("#detalje .lang").textContent = `${items.gsx$lang.$t}`;
+            document.querySelector("#detalje .oprindelse").textContent = `Oprindelse: ${items.gsx$oprindelse.$t}`;
+
+
+        }
+
+        // funktionen der skjuler detaljerne om en person
+        function hideDetalje() {
+            document.querySelector("#detalje").style.display = "none";
+        }
+    </script>
+</body></html>

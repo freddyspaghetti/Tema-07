@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <style>
+        img {
+            width: 100%;
+        }
+
+        .retter {
+            border: 1px solid silver;
+            padding: 20px;
+            cursor: pointer;
+        }
+
+
+
+        #detalje {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: hsla(282, 22%, 31%, 0.53);
+            overflow: scroll;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        #detalje .luk {
+            position: fixed;
+            top: 0;
+            left: 0;
+            font-size: 4rem;
+        }
+
+        #detalje .retter {
+            width: 60vw;
+            min-height: auto;
+            margin: 4rem auto;
+            padding: 4rem;
+            background: white;
+        }
+
+    </style>
+</head>
+
+<body>
+    <section id="detalje">
+        <article class="retter">
+            <button class="luk">←</button>
+            <h2></h2>
+            <img src="" alt="">
+            <p>
+                GitHub: <a class="githublink" href="#"></a>
+            </p>
+        </article>
+
+    </section>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const github = urlParams.get("github");
+        console.log(github);
+
+        let elever = [];
+
+        const url = "https://spreadsheets.google.com/feeds/list/17Dd7DvkPaFamNUdUKlrFgnH6POvBJXac7qyiS6zNRw0/od6/public/values?alt=json";
+
+        document.addEventListener("DOMContentLoaded", start);
+
+        function start() {
+            const filterKnapper = document.querySelectorAll("nav button");
+            console.log(start);
+            hentJson();
+            document.querySelector(".luk").addEventListener("click", () => {
+                history.back();
+            });
+
+        }
+
+        async function hentJson() {
+
+            const response = await fetch(url);
+            console.log(response);
+            elever = await response.json()
+            visJson();
+
+        }
+
+        function visJson() {
+            console.log(elever);
+            elever.feed.entry.forEach(retter => { //loop igennem JSON (retter)
+                if (retter.gsx$github.$t == github) { //tjek hvilket køn, personen har, og sammellign med filter
+                    console.log(retter);
+                    document.querySelector("#detalje h2").textContent = retter.gsx$navn.$t;
+                    document.querySelector("#detalje img").src = "imgs/large/" + retter.gsx$billede.$t + ".jpg";
+                    document.querySelector("#detalje img").alt = `Billede af ${retter.gsx$billede.$t}`;
+                    document.querySelector("#detalje .beskrivelse-lang").textContent += " " + retter.gsx$lang.$t;
+                    document.querySelector("#detalje .pris").textContent += retter.gsx$pris.$t + "kr.";
+                }
+            });
+        }
+
+    </script>
+</body>
+
+</html>
