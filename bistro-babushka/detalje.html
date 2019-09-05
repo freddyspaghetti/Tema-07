@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css?family=Pacifico|Quicksand&display=swap" rel="stylesheet">
+    <title>Bistro Babushka</title>
+    <style>
+        img {
+            width: 100%;
+        }
+
+        .items {
+            border: 1px solid silver;
+            padding: 20px;
+            cursor: pointer;
+        }
+
+        p {
+
+            color: black;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        h2 {
+            font-size: 3rem;
+            color: black;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        #detalje {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: hsla(282, 22%, 31%, 0.53);
+            overflow: scroll;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        #detalje .luk {
+            position: fixed;
+            top: 0;
+            left: 0;
+            font-size: 4rem;
+        }
+
+        #detalje .items {
+            width: 60vw;
+            min-height: auto;
+            margin: 4rem auto;
+            padding: 4rem;
+            background: white;
+        }
+
+        #detalje p {
+            color: black;
+            font-family: 'Quicksand', sans-serif;
+
+        }
+
+        #detalje h2 {
+            font-size: 4rem;
+            color: black;
+            font-family: 'Quicksand', sans-serif;
+
+        }
+    </style>
+</head>
+
+<body>
+
+    <section id="detalje">
+        <article class="items">
+            <button class="luk">X</button>
+            <h2></h2>
+            <img src"" alt="">
+            <p class=lang></p>
+            <p class="oprindelse"> </p>
+        </article>
+    </section>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const id = urlParams.get("id");
+        console.log(id);
+
+        let menu = [];
+
+        const url = "https://spreadsheets.google.com/feeds/list/17Dd7DvkPaFamNUdUKlrFgnH6POvBJXac7qyiS6zNRw0/od6/public/values?alt=json";
+
+        document.addEventListener("DOMContentLoaded", start);
+
+        function start() {
+            const filterKnapper = document.querySelectorAll("nav button");
+            console.log(start);
+            hentJson();
+            document.querySelector(".luk").addEventListener("click", () => {
+                history.back();
+            });
+
+        }
+
+        async function hentJson() {
+
+            const response = await fetch(url);
+            console.log(response);
+            menu = await response.json()
+            visJson();
+
+        }
+
+        function visJson() {
+            console.log(menu);
+            menu.feed.entry.forEach(items => { //loop igennem JSON (items)
+                if (items.gsx$id.$t == id) { //tjek hvilket køn, personen har, og sammellign med filter
+                    console.log(items);
+                    document.querySelector("#detalje h2").textContent = items.gsx$navn.$t;
+                    document.querySelector("#detalje img").src = "imgs/large/" + items.gsx$billede.$t + ".jpg";
+                    document.querySelector("#detalje img").alt = `Portræt af ${items.gsx$billede.$t}`;
+                    document.querySelector("#detalje .lang").textContent = `${items.gsx$lang.$t}`;
+                    document.querySelector("#detalje .oprindelse").textContent = `Oprindelse: ${items.gsx$oprindelse.$t}`;
+                }
+            });
+        }
+    </script>
+</body></html>

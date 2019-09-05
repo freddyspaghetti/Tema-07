@@ -2,14 +2,30 @@
 <html>
 
 <head>
-    <title>Visalle</title>
+    <title>Bistro Babushka</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css?family=Pacifico|Quicksand&display=swap" rel="stylesheet">
     <style>
+        body {
+            background-color: #adadad;
+
+        }
+
+        .splash {
+            background-image: url(6191880859_e8fbc4347d_b.jpg);
+            background-size: cover;
+            height: 300px;
+        }
+
         h1 {
+
             text-align: center;
-            font-size: 4rem;
-            font-family: arial;
+            font-size: 5em;
+            color: white;
+            font-family: 'Pacifico', cursive;
+            margin: 0;
+
         }
 
         img {
@@ -17,26 +33,46 @@
         }
 
         p {
-            font-family: arial;
+
+            color: white;
+            font-family: 'Quicksand', sans-serif;
         }
 
         h2 {
-            font-family: arial;
+
+            color: white;
+            font-family: 'Quicksand', sans-serif;
         }
 
+
         nav {
+            margin: 30px;
             text-align: center;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        nav button {
+            border-radius: 10%;
+            height: 40px;
+            width: 100px;
+
         }
 
         .valgt {
-            background-color: red;
+            background-color: #78c46f;
         }
 
         .items {
-            border: 1px solid black;
             padding: 10px;
             cursor: pointer;
-            background-color: aliceblue;
+            background-color: #797979;
+            border-radius: 3%;
+
+        }
+
+        .billede {
+            max-width: 100%;
+            background-size: cover;
         }
 
         section {
@@ -73,6 +109,19 @@
             background: white;
         }
 
+        #detalje p {
+            color: black;
+            font-family: 'Quicksand', sans-serif;
+
+        }
+
+        #detalje h2 {
+            font-size: 4rem;
+            color: black;
+            font-family: 'Quicksand', sans-serif;
+
+        }
+
         .hidden {
             display: none;
         }
@@ -80,7 +129,9 @@
 </head>
 
 <body>
-    <h1>Babushka</h1>
+    <div class="splash">
+        <h1>Babushka</h1>
+    </div>
     <nav>
         <button data-kategori="alle" class="valgt">Alle</button>
         <button data-kategori="forretter">Forrretter</button>
@@ -225,7 +276,6 @@
 
             // Gør at "X" lukker pop-up boksen
             document.querySelector("#detalje .luk").addEventListener("click", hideDetalje);
-
             document.querySelector("#detalje h2").textContent = items.gsx$navn.$t;
             document.querySelector("#detalje img").src = "imgs/large/" + items.gsx$billede.$t + ".jpg";
             document.querySelector("#detalje img").alt = `Portræt af ${items.gsx$billede.$t}`;

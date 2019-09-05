@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Bistro Babushka</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css?family=Pacifico|Quicksand&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #adadad;
+        }
+
+        .splash {
+            background-image: url(6191880859_e8fbc4347d_b.jpg);
+            background-size: cover;
+            height: 300px;
+        }
+
+        h1 {
+
+            text-align: center;
+            font-size: 5em;
+            color: white;
+            font-family: 'Pacifico', cursive;
+            margin: 0;
+
+        }
+
+        img {
+            width: 100%;
+        }
+
+        p {
+
+            color: white;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        h2 {
+
+            color: white;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+
+        nav {
+            margin: 30px;
+            text-align: center;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        nav button {
+            border-radius: 10%;
+            height: 40px;
+            width: 100px;
+
+        }
+
+        .valgt {
+            background-color: #78c46f;
+        }
+
+        .items {
+            padding: 10px;
+            cursor: pointer;
+            background-color: #797979;
+            border-radius: 3%;
+
+        }
+
+        .billede {
+            max-width: 100%;
+            background-size: cover;
+        }
+
+        section {
+            width: 80vw;
+            margin: 1vw auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-gap: 1rem;
+            /*  */
+        }
+
+        #detalje {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: hsla(282, 22%, 31%, 0.53);
+            overflow: scroll;
+        }
+
+        #detalje .luk {
+            position: fixed;
+            top: 0;
+            right: 0;
+            font-size: 4rem;
+        }
+
+        #detalje .items {
+            width: 60vw;
+            min-height: 50vh;
+            margin: 4rem auto;
+            padding: 4rem;
+            background: white;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="splash">
+        <h1>Babushka</h1>
+    </div>
+    <nav>
+        <button data-kategori="alle" class="valgt">Alle</button>
+        <button data-kategori="forretter">Forrretter</button>
+        <button data-kategori="hovedretter">Hovedretter</button>
+        <button data-kategori="desserter">Desserter</button>
+        <button data-kategori="sideorders">Sides</button>
+        <button data-kategori="drikkevarer">Drikkevarer</button>
+    </nav>
+
+
+    <section id="item-liste"></section>
+
+
+
+    <template>
+        <article class="items">
+            <h2 class="navn">Navn</h2>
+            <p class="lang"> </p>
+            <p class="oprindelse"> </p>
+            <p class="kort"> </p>
+            <img class="billede" src="" alt="">
+            <p class="pris"> </p>
+
+
+
+        </article>
+    </template>
+
+    <script>
+        //Glodbale variabler:
+        document.addEventListener("DOMContentLoaded", start);
+        let filter = "alle";
+        let menu = [];
+        const filterKnapper = document.querySelectorAll("nav button");
+
+
+        //første funktion der kaldes efter DOM er loaded
+        function start() {
+            const filterKnapper = document.querySelectorAll("nav button");
+            filterKnapper.forEach(knap => knap.addEventListener("click", filtrer))
+
+            hentJson();
+        }
+
+
+        //const id = "1Xge7slZ9dEOTCn1Yxl3OE4xgvrXOL8Y_iu3WN1yGB1U";
+
+        const url = "https://spreadsheets.google.com/feeds/list/17Dd7DvkPaFamNUdUKlrFgnH6POvBJXac7qyiS6zNRw0/od6/public/values?alt=json";
+
+
+        // funktion der henter data fra URL (Google Sheet)
+        async function hentJson() {
+            const response = await fetch(url);
+            console.log(response);
+            menu = await response.json();
+
+
+            visJson();
+        }
+
+        //
+        filterKnapper.forEach(knap => knap.addEventListener("click", filtrer));
+
+        // funktion der filtrerer items
+        function filtrer() {
+            console.log(filter);
+            document.querySelector(".valgt").classList.remove("valgt");
+            this.classList.add("valgt");
+            filter = this.dataset.kategori;
+            visJson();
+
+        }
+
+
+        // funktion der viser items i liste view
+        function visJson() {
+            const skabelon = document.querySelector("template").content; // select indhold af HTML skabelon (article)
+            const dest = document.querySelector("#item-liste"); //container til articles med en person
+            dest.textContent = "";
+            console.log(menu);
+            menu.feed.entry.forEach(items => { // Loop igennem JSON (items)
+
+                if (items.gsx$kategori.$t == filter || filter == "alle") { // Tjek hvilket oprindelse personen har og sammenlign med filter
+                    const klon = skabelon.cloneNode(true);
+
+
+                    console.log(items);
+
+                    // Hent og vis navn
+                    const h2 = klon.querySelector("h2");
+                    h2.textContent = items.gsx$navn.$t;
+
+                    // Hent og vis pris
+                    const p = klon.querySelector(".pris");
+                    p.textContent = "Pris: " + items.gsx$pris.$t + " kr.";
+
+
+                    // Hent og vis img
+                    const img = klon.querySelector("img");
+                    klon.querySelector(".billede").src = "imgs/small/" + items.gsx$billede.$t + "-sm.jpg";
+                    img.alt = "Billede af " + items.navn;
+
+
+                    // Hent og vis kort
+                    const kort = klon.querySelector(".kort");
+                    kort.textContent = "" + items.gsx$kort.$t;
+
+
+
+
+
+
+                    klon.querySelector(".items").addEventListener("click", () => {
+                        location.href = `detalje.html?id=${items.gsx$id.$t}`;
+                    });
+
+                    dest.appendChild(klon);
+
+                }
+            });
+
+        }
+    </script>
+</body></html>
